@@ -3,3 +3,4 @@
 .env
 temp.py
 __pycache__
+data
