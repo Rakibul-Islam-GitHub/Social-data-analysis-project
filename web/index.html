@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>What a City Average Hides | Global PM2.5 Story</title>
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+  <!-- Google font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --sidebar-w: 292px;
+      --ink: #14213d;
+      --muted: #64748b;
+      --page: #f7f4ee;
+      --card: rgba(255, 255, 255, 0.78);
+      --card-solid: #ffffff;
+      --line: rgba(20, 33, 61, 0.12);
+      --accent: #e76f51;
+      --accent-2: #2a9d8f;
+      --accent-3: #264653;
+      --shadow: 0 24px 70px rgba(20, 33, 61, 0.12);
+      --soft-shadow: 0 12px 34px rgba(20, 33, 61, 0.09);
+      --plot-bg: #ffffff;
+    }
+
+    html[data-bs-theme="dark"] {
+      --ink: #eff6ff;
+      --muted: #a7b4c6;
+      --page: #0b1020;
+      --card: rgba(18, 26, 46, 0.76);
+      --card-solid: #111827;
+      --line: rgba(255, 255, 255, 0.12);
+      --accent: #ff8f70;
+      --accent-2: #5eead4;
+      --accent-3: #9cc8ff;
+      --shadow: 0 28px 90px rgba(0, 0, 0, 0.38);
+      --soft-shadow: 0 16px 48px rgba(0, 0, 0, 0.28);
+      --plot-bg: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(231, 111, 81, 0.18), transparent 32rem),
+        radial-gradient(circle at 86% 32%, rgba(42, 157, 143, 0.16), transparent 30rem),
+        linear-gradient(135deg, var(--page), var(--page));
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.055;
+      z-index: -1;
+      background-image:
+        linear-gradient(var(--ink) 1px, transparent 1px),
+        linear-gradient(90deg, var(--ink) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: linear-gradient(to bottom, black, transparent 85%);
+    }
+
+    a { color: inherit; }
+
+    .vertical-menu {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: var(--sidebar-w);
+      padding: 28px 22px;
+      border-right: 1px solid var(--line);
+      background: color-mix(in srgb, var(--card-solid) 72%, transparent);
+      backdrop-filter: blur(18px);
+      z-index: 1030;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .brand-block {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(231, 111, 81, 0.14), rgba(42, 157, 143, 0.12));
+      box-shadow: var(--soft-shadow);
+    }
+
+    .brand-eyebrow {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .brand-title {
+      margin: 8px 0 0;
+      font-weight: 900;
+      font-size: 1.15rem;
+      line-height: 1.05;
+    }
+
+    .theme-toggle {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--card);
+      color: var(--ink);
+      padding: 10px 12px;
+      font-weight: 800;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .theme-toggle:hover { transform: translateY(-2px); box-shadow: var(--soft-shadow); }
+
+    .nav-pills.story-nav {
+      gap: 6px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .story-nav .nav-link {
+      color: var(--muted);
+      border-radius: 18px;
+      padding: 10px 12px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all .22s ease;
+    }
+
+    .story-nav .nav-link i {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: rgba(231, 111, 81, 0.10);
+      color: var(--accent);
+    }
+
+    .story-nav .nav-link:hover,
+    .story-nav .nav-link.active {
+      background: linear-gradient(135deg, rgba(231, 111, 81, 0.18), rgba(42, 157, 143, 0.12));
+      color: var(--ink);
+      transform: translateX(4px);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.45;
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+    }
+
+    .mobile-topbar {
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 1040;
+      background: color-mix(in srgb, var(--card-solid) 80%, transparent);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    main {
+      margin-left: var(--sidebar-w);
+      min-height: 100vh;
+    }
+
+    .section {
+      padding: 92px min(7vw, 90px);
+      position: relative;
+    }
+
+    .section-narrow { max-width: 1180px; margin: 0 auto; }
+
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.06fr) minmax(310px, .74fr);
+      gap: 44px;
+      align-items: center;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(231, 111, 81, 0.14);
+      color: var(--accent);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.76rem;
+    }
+
+    h1, h2, h3 {
+      letter-spacing: -0.04em;
+      color: var(--ink);
+    }
+
+    h1 {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(3.2rem, 7vw, 7.2rem);
+      line-height: 0.88;
+      margin: 22px 0 24px;
+    }
+
+    h2 {
+      font-size: clamp(2.1rem, 4.2vw, 4.7rem);
+      line-height: 0.96;
+      font-weight: 900;
+      margin-bottom: 18px;
+    }
+
+    h3 { font-weight: 900; }
+
+    .lead-text {
+      color: var(--muted);
+      font-size: clamp(1.05rem, 1.5vw, 1.28rem);
+      line-height: 1.72;
+      max-width: 760px;
+    }
+
+    .glass-card {
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 24px;
+      background: color-mix(in srgb, var(--card-solid) 82%, transparent);
+      border: 1px solid var(--line);
+    }
+
+    .stat-value {
+      font-weight: 900;
+      font-size: 2rem;
+      letter-spacing: -0.06em;
+      color: var(--accent);
+    }
+
+    .stat-label { color: var(--muted); font-size: 0.86rem; font-weight: 700; }
+
+    .section-label {
+      color: var(--accent);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: .78rem;
+      margin-bottom: 14px;
+    }
+
+    .story-card {
+      padding: 28px;
+      border-radius: 30px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      box-shadow: var(--soft-shadow);
+      height: 100%;
+    }
+
+    .viz-frame {
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--plot-bg);
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .viz-frame iframe {
+      width: 100%;
+      height: 720px;
+      border: 0;
+      display: block;
+      background: #fff;
+    }
+
+    .viz-frame.tall iframe { height: 860px; }
+    .viz-frame.mid iframe { height: 680px; }
+    .viz-frame.short iframe { height: 620px; }
+
+    .caption {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.65;
+      margin-top: 14px;
+    }
+
+    .pull-quote {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(1.8rem, 3vw, 3.4rem);
+      line-height: 1.05;
+      color: var(--ink);
+      border-left: 7px solid var(--accent);
+      padding: 18px 0 18px 28px;
+      margin: 36px 0;
+      background: linear-gradient(90deg, rgba(231,111,81,.10), transparent);
+      border-radius: 0 28px 28px 0;
+    }
+
+    .insight-list {
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .insight {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: color-mix(in srgb, var(--card-solid) 70%, transparent);
+    }
+
+    .insight i {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: rgba(42, 157, 143, .16);
+      color: var(--accent-2);
+      font-size: 1.25rem;
+    }
+
+    .btn-story {
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 900;
+      border: 1px solid var(--line);
+      background: var(--card-solid);
+      color: var(--ink);
+      transition: all .24s ease;
+    }
+
+    .btn-story:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--soft-shadow);
+      color: var(--ink);
+    }
+
+    .btn-accent {
+      background: linear-gradient(135deg, var(--accent), #f4a261);
+      color: #fff;
+      border: 0;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity .8s ease, transform .8s ease;
+    }
+
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .chapter-number {
+      font-weight: 900;
+      font-size: clamp(3rem, 6vw, 6rem);
+      letter-spacing: -0.08em;
+      color: color-mix(in srgb, var(--accent) 45%, transparent);
+      line-height: .8;
+    }
+
+    .method-table {
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    .method-table table { margin-bottom: 0; }
+
+    .method-table th {
+      background: color-mix(in srgb, var(--accent-3) 10%, transparent);
+      color: var(--ink);
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    @media (max-width: 1100px) {
+      :root { --sidebar-w: 0px; }
+
+      .vertical-menu { display: none; }
+      .mobile-topbar { display: block; }
+      main { margin-left: 0; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .section { padding: 74px 22px; }
+      .viz-frame iframe { height: 620px; }
+      .viz-frame.tall iframe { height: 760px; }
+    }
+
+    @media (max-width: 650px) {
+      .stat-grid { grid-template-columns: 1fr; }
+      .viz-frame iframe { height: 540px; }
+      .viz-frame.tall iframe { height: 700px; }
+      h1 { font-size: 3.3rem; }
+    }
+  </style>
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#storyMenu" data-bs-smooth-scroll="true" tabindex="0">
+  <!-- Mobile topbar -->
+  <div class="mobile-topbar px-3 py-2">
+    <div class="d-flex justify-content-between align-items-center">
+      <strong>What a City Average Hides</strong>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-outline-secondary rounded-pill" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+          <i class="bi bi-list"></i> Menu
+        </button>
+        <button class="btn btn-sm btn-outline-secondary rounded-pill js-theme-toggle">
+          <i class="bi bi-moon-stars"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desktop vertical menu -->
+  <aside class="vertical-menu">
+    <div class="brand-block">
+      <div class="brand-eyebrow">Social Data Viz</div>
+      <div class="brand-title">What a City Average Hides</div>
+    </div>
+
+    <button class="theme-toggle js-theme-toggle" type="button">
+      <span><i class="bi bi-brightness-high me-2"></i><span class="js-theme-label">Light mode</span></span>
+      <i class="bi bi-toggle2-off js-theme-icon"></i>
+    </button>
+
+    <nav id="storyMenu" class="nav nav-pills flex-column story-nav">
+      <a class="nav-link" href="#hero"><i class="bi bi-house"></i> Opening</a>
+      <a class="nav-link" href="#data"><i class="bi bi-database"></i> Data journey</a>
+      <a class="nav-link" href="#map"><i class="bi bi-globe2"></i> Global map</a>
+      <a class="nav-link" href="#seasonality"><i class="bi bi-grid-3x3-gap"></i> Seasonality</a>
+      <a class="nav-link" href="#ranking"><i class="bi bi-arrow-down-up"></i> Ranking shifts</a>
+      <a class="nav-link" href="#exceedance"><i class="bi bi-calendar2-week"></i> Exceedance burden</a>
+      <a class="nav-link" href="#particles"><i class="bi bi-fingerprint"></i> Particle profiles</a>
+      <a class="nav-link" href="#episodes"><i class="bi bi-wind"></i> Weather episodes</a>
+      <a class="nav-link" href="#fingerprint"><i class="bi bi-diagram-3"></i> City fingerprints</a>
+      <a class="nav-link" href="#dubai"><i class="bi bi-buildings"></i> Dubai deep dive</a>
+      <a class="nav-link" href="#takeaways"><i class="bi bi-stars"></i> Takeaways</a>
+      <a class="nav-link" href="#references"><i class="bi bi-book"></i> References</a>
+
+    </nav>
+
+    <div class="sidebar-footer">
+      DTU 02806 final project<br />
+      OpenAQ + Open-Meteo, 2025<br />
+      <span class="d-inline-block mt-2">Scroll for the story ↓</span>
+    </div>
+  </aside>
+
+  <!-- Mobile offcanvas -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">Story menu</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div class="nav flex-column story-nav">
+        <a class="nav-link" href="#hero" data-bs-dismiss="offcanvas"><i class="bi bi-house"></i> Opening</a>
+        <a class="nav-link" href="#data" data-bs-dismiss="offcanvas"><i class="bi bi-database"></i> Data journey</a>
+        <a class="nav-link" href="#map" data-bs-dismiss="offcanvas"><i class="bi bi-globe2"></i> Global map</a>
+        <a class="nav-link" href="#seasonality" data-bs-dismiss="offcanvas"><i class="bi bi-grid-3x3-gap"></i> Seasonality</a>
+        <a class="nav-link" href="#ranking" data-bs-dismiss="offcanvas"><i class="bi bi-arrow-down-up"></i> Ranking shifts</a>
+        <a class="nav-link" href="#exceedance" data-bs-dismiss="offcanvas"><i class="bi bi-calendar2-week"></i> Exceedance burden</a>
+        <a class="nav-link" href="#particles" data-bs-dismiss="offcanvas"><i class="bi bi-fingerprint"></i> Particle profiles</a>
+        <a class="nav-link" href="#episodes" data-bs-dismiss="offcanvas"><i class="bi bi-wind"></i> Weather episodes</a>
+        <a class="nav-link" href="#fingerprint" data-bs-dismiss="offcanvas"><i class="bi bi-diagram-3"></i> City fingerprints</a>
+        <a class="nav-link" href="#dubai" data-bs-dismiss="offcanvas"><i class="bi bi-buildings"></i> Dubai deep dive</a>
+        <a class="nav-link" href="#takeaways" data-bs-dismiss="offcanvas"><i class="bi bi-stars"></i> Takeaways</a>
+        <a class="nav-link" href="#references" data-bs-dismiss="offcanvas"><i class="bi bi-book"></i> References</a>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <!-- Hero -->
+    <section id="hero" class="section hero">
+      <div class="section-narrow hero-grid">
+        <div class="reveal">
+          <span class="kicker"><i class="bi bi-cloud-haze2"></i> Global urban air story</span>
+          <h1>What a City Average Hides</h1>
+          <p class="lead-text">
+            We followed PM2.5, PM10, and weather across selected global cities to ask a simple question:
+            when people say one city is more polluted than another, what patterns disappear behind that average?
+          </p>
+
+          <div>
+            Authors: <strong>s260126</strong> & <strong>s264667</strong><br />
+          </div>
+          <div class="d-flex flex-wrap gap-3 mt-4">
+            <a class="btn btn-story btn-accent" href="#map">Start the story</a>
+            <a class="btn btn-story" href="#takeaways">Jump to findings</a>
+          </div>
+        </div>
+
+        <div class="glass-card p-4 reveal">
+          <div class="stat-grid">
+            <div class="stat">
+              <div class="stat-value">15</div>
+              <div class="stat-label">main comparison cities</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">2025</div>
+              <div class="stat-label">analysis window</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">24h</div>
+              <div class="stat-label">WHO PM2.5 guideline basis</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">700k+</div>
+              <div class="stat-label">Raw hourly data</div>
+            </div>
+          </div>
+          <p class="caption mb-0 mt-3">
+            The story uses coverage-aware city selection, robust median comparisons, WHO exceedance burden,
+            particle profiles, weather context, and a Dubai-focused deep dive.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data -->
+    <section id="data" class="section">
+      <div class="section-narrow reveal">
+        <div class="section-label">01 · Data journey</div>
+        <h2>From public sensors to a story-ready dataset.</h2>
+        <p class="lead-text">
+          We combined OpenAQ air-quality measurements with Open-Meteo weather variables, then filtered cities using data coverage.
+          This means the story starts with a methodological choice: compare only cities with enough usable evidence.
+        </p>
+        <div class="row g-4 mt-3">
+          <div class="col-md-4">
+            <div class="story-card">
+              <h3><i class="bi bi-cloud-download me-2 text-danger"></i>OpenAQ</h3>
+              <p class="caption mb-0">PM2.5 and PM10 observations were fetched from the OpenAQ S3 archive, aggregated from location-hour to city-hour, then city-day and city-month.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="story-card">
+              <h3><i class="bi bi-cloud-sun me-2 text-warning"></i>Open-Meteo</h3>
+              <p class="caption mb-0">Weather features such as wind speed, temperature, humidity, cloud cover, and precipitation were joined to city-hourly data.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="story-card">
+              <h3><i class="bi bi-check2-circle me-2 text-success"></i>Coverage audit</h3>
+              <p class="caption mb-0">Cities with weak or misaligned coverage were excluded from the main web story and retained as documented context.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Map -->
+    <section id="map" class="section">
+      <div class="section-narrow reveal">
+        <div class="chapter-number">01</div>
+        <div class="section-label">Global view</div>
+        <h2>Where does PM2.5 concentrate across the year?</h2>
+        <p class="lead-text">
+          The animated map shows monthly median PM2.5 across selected cities. Marker size reflects active monitoring coverage,
+          while color shows the pollution burden in that month.
+        </p>
+        <div class="viz-frame mt-4">
+          <iframe title="Autoplay global PM2.5 map" src="../outputs/figures/autoplay_monthly_median_pm25_global_map.html"></iframe>
+        </div>
+        <p class="caption"><strong>Figure:</strong> Animated monthly map of median PM2.5. The map introduces the global geography of the story before we look inside the year.</p>
+      </div>
+    </section>
+
+    <!-- Seasonality -->
+    <section id="seasonality" class="section">
+      <div class="section-narrow reveal">
+        <div class="chapter-number">02</div>
+        <div class="section-label">Seasonality fingerprint</div>
+        <h2>The same city can look different by month.</h2>
+        <p class="lead-text">
+          A yearly average hides the rhythm of pollution. The heatmap reveals which cities stay high throughout the year and which ones rise or fall seasonally.
+        </p>
+        <div class="viz-frame mid mt-4">
+          <iframe title="City-month PM2.5 heatmap" src="../outputs/figures/city_month_median_pm25_heatmap.html"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ranking -->
+    <section id="ranking" class="section">
+      <div class="section-narrow reveal">
+        <div class="chapter-number">03</div>
+        <div class="section-label">Ranking transitions</div>
+        <h2>Rankings move. Exposure does not wait for annual averages.</h2>
+        <p class="lead-text">
+          The bump chart ranks cities month by month using median PM2.5. It shows why a static “most polluted city” list is too simple.
+        </p>
+        <div class="pull-quote">The most polluted city depends on when you look.</div>
+        <div class="viz-frame tall mt-4">
+          <iframe title="Monthly PM2.5 rank transitions" src="../outputs/figures/monthly_pm25_median_bump_chart.html"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- Exceedance -->
+    <section id="exceedance" class="section">
+      <div class="section-narrow reveal">
+        <div class="chapter-number">04</div>
+        <div class="section-label">Lived burden</div>
+        <h2>How many days cross the WHO daily guideline?</h2>
+        <p class="lead-text">
+          The dot matrix changes the question from “what is the average?” to “how often do people experience above-guideline days?”
+        </p>
+        <div class="viz-frame tall mt-4">
+          <iframe title="WHO daily PM2.5 exceedance matrix" src="../outputs/figures/pm25_who_daily_exceedance_dot_matrix_2025.html"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- Particles -->
+    <section id="particles" class="section">
+      <div class="section-narrow reveal">
+        <div class="chapter-number">05</div>
+        <div class="section-label">Particle profile</div>
+        <h2>Bad air is not one single condition.</h2>
+        <p class="lead-text">
+          PM2.5 and PM10 describe different particle-size ranges. The PM2.5/PM10 ratio gives a particle-profile indicator, not direct source attribution.
+        </p>
+        <div class="viz-frame mid mt-4">
+          <iframe title="Particle profile ridgeline" src="../outputs/figures/particle_profile_pm25_pm10_ridgeline_2025.html"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- Episodes -->
+    <section id="episodes" class="section">
+      <div class="section-narrow reveal">
+        <div class="chapter-number">06</div>
+        <div class="section-label">Weather episodes</div>
+        <h2>Weather context changes the shape of a bad day.</h2>
+        <p class="lead-text">
+          Wind speed, PM10, and particle ratio help distinguish high-PM2.5 days from PM10-heavy or coarse-particle-influenced episodes.
+        </p>
+        <div class="viz-frame tall mt-4">
+          <iframe title="Weather episode fingerprints" src="../outputs/figures/weather_episode_fingerprint_2025.html"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- Fingerprint -->
+    <section id="fingerprint" class="section">
+      <div class="section-narrow reveal">
+        <div class="chapter-number">07</div>
+        <div class="section-label">City fingerprints</div>
+        <h2>Cities cluster by behavior, not just pollution level.</h2>
+        <p class="lead-text">
+          The fingerprint map compresses pollution burden, exceedance, seasonality, particle profile, and weather into one exploratory view.
+        </p>
+        <div class="viz-frame mt-4">
+          <iframe title="City fingerprint PCA" src="../outputs/figures/city_fingerprint_pca_2025.html"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dubai -->
+    <section id="dubai" class="section">
+      <div class="section-narrow reveal">
+        <div class="chapter-number">08</div>
+        <div class="section-label">Dubai deep dive</div>
+        <h2>Inside one city, timing still matters.</h2>
+        <p class="lead-text">
+          Dubai is the local case study. The hour-by-month heatmap shows that even a city-level average hides daily timing and seasonal rhythm.
+        </p>
+        <div class="viz-frame mt-4">
+          <iframe title="Dubai hour-month PM2.5 heatmap" src="../outputs/figures/dubai_hour_month_pm25_heatmap_2025.html"></iframe>
+        </div>
+        <p class="caption"><strong>Figure:</strong> Dubai’s diurnal pollution fingerprint. Darker cells show higher median PM2.5 by local hour and month.</p>
+      </div>
+    </section>
+
+    <!-- Takeaways -->
+    <section id="takeaways" class="section">
+      <div class="section-narrow reveal">
+        <div class="section-label">Final takeaways</div>
+        <h2>Three things the city average hides.</h2>
+        <div class="insight-list">
+          <div class="insight">
+            <i class="bi bi-arrow-repeat"></i>
+            <div>
+              <h3>Rankings are unstable.</h3>
+              <p class="caption mb-0">City positions shift month by month, so annual rankings hide seasonal dynamics and short pollution episodes.</p>
+            </div>
+          </div>
+          <div class="insight">
+            <i class="bi bi-calendar2-x"></i>
+            <div>
+              <h3>Exceedance burden matters.</h3>
+              <p class="caption mb-0">The number of days above the WHO PM2.5 guideline better represents lived exposure than a single mean value.</p>
+            </div>
+          </div>
+          <div class="insight">
+            <i class="bi bi-fingerprint"></i>
+            <div>
+              <h3>Cities have fingerprints.</h3>
+              <p class="caption mb-0">PM2.5 burden, PM10 context, weather, seasonality, and daily episodes create distinct pollution profiles.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="story-card mt-5">
+          <h3>Limitations</h3>
+          <p class="caption mb-0">
+            The analysis is descriptive and coverage-aware. PM2.5/PM10 ratios are interpreted as particle-profile indicators, not as direct source attribution.
+            Sensor coverage differs by city, and source confirmation would require additional land-use, emissions, or source-apportionment data.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Notebook link -->
+<section id="notebook" class="section">
+  <div class="section-narrow reveal">
+    <div class="section-label">Reproducibility</div>
+    <h2>See the analysis notebook.</h2>
+    <p class="lead-text">
+      The full analysis notebook documents the data preparation decisions, visual analysis workflow,
+      and code used to generate the figures in this story.
+    </p>
+
+    <div class="story-card mt-4">
+      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3">
+        <div>
+          <h3 class="mb-2"><i class="bi bi-github me-2"></i>Analysis notebook</h3>
+          <p class="caption mb-0">
+            Open the notebook on GitHub to inspect the code and analysis pipeline.
+          </p>
+        </div>
+
+        <a
+          class="btn btn-story btn-accent"
+          href="https://github.com/Rakibul-Islam-GitHub/Social-data-analysis-project/blob/main/notebooks/02_analysis.ipynb"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open notebook <i class="bi bi-box-arrow-up-right ms-2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- References -->
+<section id="references" class="section">
+  <div class="section-narrow reveal">
+    <div class="section-label">References</div>
+    <h2>Data sources and methods.</h2>
+    <p class="lead-text">
+      This project combines public air-quality observations, historical weather data,
+      and guideline-based interpretation. The references below support the data pipeline
+      and the meaning of the main air-quality indicators.
+    </p>
+
+    <div class="method-table mt-4">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th scope="col">Source</th>
+            <th scope="col">Used for</th>
+            <th scope="col">Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>OpenAQ</strong></td>
+            <td>PM2.5 and PM10 air-quality observations from monitoring locations.</td>
+            <td>
+              <a href="https://openaq.org/" target="_blank" rel="noopener noreferrer">
+                openaq.org <i class="bi bi-box-arrow-up-right"></i>
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td><strong>OpenAQ Data Access / S3 archive</strong></td>
+            <td>Historical measurement files used to build city-hourly, daily, and monthly datasets.</td>
+            <td>
+              <a href="https://docs.openaq.org/" target="_blank" rel="noopener noreferrer">
+                OpenAQ docs <i class="bi bi-box-arrow-up-right"></i>
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td><strong>Open-Meteo Historical Weather API</strong></td>
+            <td>Temperature, humidity, wind speed, precipitation, cloud cover, and pressure features.</td>
+            <td>
+              <a href="https://open-meteo.com/en/docs/historical-weather-api" target="_blank" rel="noopener noreferrer">
+                Open-Meteo API <i class="bi bi-box-arrow-up-right"></i>
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td><strong>World Health Organization</strong></td>
+            <td>Daily PM2.5 guideline threshold used for exceedance analysis.</td>
+            <td>
+              <a href="https://www.who.int/publications/i/item/9789240034228" target="_blank" rel="noopener noreferrer">
+                WHO AQ guidelines <i class="bi bi-box-arrow-up-right"></i>
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td><strong>Plotly</strong></td>
+            <td>Interactive maps, heatmaps, bump charts, dot matrices, ridgelines, and PCA visualizations.</td>
+            <td>
+              <a href="https://plotly.com/python/" target="_blank" rel="noopener noreferrer">
+                Plotly Python <i class="bi bi-box-arrow-up-right"></i>
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td><strong>Bootstrap</strong></td>
+            <td>Responsive layout, vertical navigation, cards, and interface components.</td>
+            <td>
+              <a href="https://getbootstrap.com/" target="_blank" rel="noopener noreferrer">
+                Bootstrap <i class="bi bi-box-arrow-up-right"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="caption mt-3">
+      Note: PM2.5 / PM10 ratios are used as descriptive particle-profile indicators,
+      not as direct source attribution. Source attribution would require additional
+      emissions, land-use, or source-apportionment data.
+    </p>
+  </div>
+</section>
+
+
+
+    <footer class="section py-5">
+      <div class="section-narrow d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+          <strong>What a City Average Hides</strong><br />
+          <span>DTU 02806 Social Data Analysis and Visualization · OpenAQ + Open-Meteo</span>
+        </div>
+        <a class="btn btn-story" href="#hero"><i class="bi bi-arrow-up me-2"></i>Back to top</a>
+      </div>
+    </footer>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const root = document.documentElement;
+    const themeButtons = document.querySelectorAll('.js-theme-toggle');
+    const labels = document.querySelectorAll('.js-theme-label');
+    const icons = document.querySelectorAll('.js-theme-icon');
+
+    function setTheme(theme) {
+      root.setAttribute('data-bs-theme', theme);
+      localStorage.setItem('pm25-story-theme', theme);
+      const isDark = theme === 'dark';
+      labels.forEach(label => label.textContent = isDark ? 'Dark mode' : 'Light mode');
+      icons.forEach(icon => {
+        icon.classList.toggle('bi-toggle2-on', isDark);
+        icon.classList.toggle('bi-toggle2-off', !isDark);
+      });
+      document.querySelectorAll('.js-theme-toggle i.bi-moon-stars, .js-theme-toggle i.bi-brightness-high').forEach(icon => {
+        icon.classList.toggle('bi-moon-stars', !isDark);
+        icon.classList.toggle('bi-brightness-high', isDark);
+      });
+    }
+
+    const savedTheme = localStorage.getItem('pm25-story-theme') || 'light';
+    setTheme(savedTheme);
+
+    themeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const current = root.getAttribute('data-bs-theme') || 'light';
+        setTheme(current === 'light' ? 'dark' : 'light');
+      });
+    });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('in-view');
+      });
+    }, { threshold: 0.14 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // Improve active nav state after iframe-heavy sections load
+    window.addEventListener('load', () => {
+      bootstrap.ScrollSpy.getOrCreateInstance(document.body, {
+        target: '#storyMenu',
+        smoothScroll: true,
+        rootMargin: '0px 0px -65%'
+      }).refresh();
+    });
+  </script>
+</body>
+</html>

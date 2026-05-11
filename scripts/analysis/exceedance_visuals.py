@@ -1,4 +1,3 @@
-
 """
 Exceedance visualization utilities.
 
@@ -19,7 +18,6 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-
 
 PathLike = Union[str, Path]
 
@@ -82,13 +80,7 @@ CITY_TO_GROUP = {
 
 
 def clean_city_key(value) -> str:
-    return (
-        str(value)
-        .strip()
-        .lower()
-        .replace(" ", "_")
-        .replace("-", "_")
-    )
+    return str(value).strip().lower().replace(" ", "_").replace("-", "_")
 
 
 def fill_city_metadata(df: pd.DataFrame) -> pd.DataFrame:
@@ -102,18 +94,20 @@ def fill_city_metadata(df: pd.DataFrame) -> pd.DataFrame:
     if "city_group" not in df.columns:
         df["city_group"] = pd.NA
 
-    missing_country = (
-        df["country"].isna()
-        | df["country"].astype(str).str.lower().str.strip().isin(["", "nan", "none", "null"])
-    )
+    missing_country = df["country"].isna() | df["country"].astype(
+        str
+    ).str.lower().str.strip().isin(["", "nan", "none", "null"])
 
-    missing_group = (
-        df["city_group"].isna()
-        | df["city_group"].astype(str).str.lower().str.strip().isin(["", "nan", "none", "null"])
-    )
+    missing_group = df["city_group"].isna() | df["city_group"].astype(
+        str
+    ).str.lower().str.strip().isin(["", "nan", "none", "null"])
 
-    df.loc[missing_country, "country"] = df.loc[missing_country, "city_key"].map(CITY_TO_COUNTRY)
-    df.loc[missing_group, "city_group"] = df.loc[missing_group, "city_key"].map(CITY_TO_GROUP)
+    df.loc[missing_country, "country"] = df.loc[missing_country, "city_key"].map(
+        CITY_TO_COUNTRY
+    )
+    df.loc[missing_group, "city_group"] = df.loc[missing_group, "city_key"].map(
+        CITY_TO_GROUP
+    )
 
     return df
 
@@ -183,11 +177,12 @@ def prepare_pm25_exceedance_data(
 
     daily["exceedance_status"] = "Below WHO daily guideline"
 
-    daily.loc[daily["pm25_exceeds_who"], "exceedance_status"] = "Above WHO daily guideline"
+    daily.loc[daily["pm25_exceeds_who"], "exceedance_status"] = (
+        "Above WHO daily guideline"
+    )
 
     daily.loc[
-        ~daily["coverage_ok"] | daily["pm25_daily_mean"].isna(),
-        "exceedance_status"
+        ~daily["coverage_ok"] | daily["pm25_daily_mean"].isna(), "exceedance_status"
     ] = "Low coverage / missing"
 
     daily["pm25_above_guideline"] = daily["pm25_daily_mean"] - who_threshold
@@ -198,14 +193,18 @@ def prepare_pm25_exceedance_data(
     valid_daily = daily[daily["coverage_ok"] & daily["pm25_daily_mean"].notna()].copy()
 
     exceedance_summary = (
-        valid_daily
-        .groupby(["city_key", "city_display", "country", "city_group"], dropna=False)
+        valid_daily.groupby(
+            ["city_key", "city_display", "country", "city_group"], dropna=False
+        )
         .agg(
             valid_days=("local_date", "nunique"),
             exceedance_days=("pm25_exceeds_who", "sum"),
             median_pm25=("pm25_daily_median", "median"),
             mean_pm25=("pm25_daily_mean", "mean"),
-            p90_pm25=("pm25_daily_mean", lambda x: float(pd.to_numeric(x, errors="coerce").quantile(0.90))),
+            p90_pm25=(
+                "pm25_daily_mean",
+                lambda x: float(pd.to_numeric(x, errors="coerce").quantile(0.90)),
+            ),
             max_pm25=("pm25_daily_mean", "max"),
             mean_coverage=("pm25_daily_coverage_pct", "mean"),
         )
@@ -224,8 +223,7 @@ def prepare_pm25_exceedance_data(
         city_df = city_df.sort_values("local_date").copy()
 
         city_df["valid_exceedance_bool"] = (
-            city_df["coverage_ok"]
-            & city_df["pm25_exceeds_who"]
+            city_df["coverage_ok"] & city_df["pm25_exceeds_who"]
         )
 
         streak_rows.append(
@@ -284,20 +282,42 @@ def build_pm25_exceedance_dot_matrix(
     }
 
     daily["hover_text"] = (
-        "<b>" + daily["city_display"] + "</b><br>"
-        + "Date: " + daily["date_label"] + "<br>"
-        + "Status: " + daily["exceedance_status"] + "<br>"
-        + "Daily mean PM2.5: " + daily["pm25_daily_mean"].round(1).astype(str) + " ug/m3<br>"
-        + "Daily median PM2.5: " + daily["pm25_daily_median"].round(1).astype(str) + " ug/m3<br>"
-        + "Valid PM2.5 hours: " + daily["valid_pm25_hours"].fillna(0).astype(int).astype(str) + "<br>"
-        + "Coverage: " + daily["pm25_daily_coverage_pct"].round(0).astype(str) + "%<br>"
+        "<b>"
+        + daily["city_display"]
+        + "</b><br>"
+        + "Date: "
+        + daily["date_label"]
+        + "<br>"
+        + "Status: "
+        + daily["exceedance_status"]
+        + "<br>"
+        + "Daily mean PM2.5: "
+        + daily["pm25_daily_mean"].round(1).astype(str)
+        + " ug/m3<br>"
+        + "Daily median PM2.5: "
+        + daily["pm25_daily_median"].round(1).astype(str)
+        + " ug/m3<br>"
+        + "Valid PM2.5 hours: "
+        + daily["valid_pm25_hours"].fillna(0).astype(int).astype(str)
+        + "<br>"
+        + "Coverage: "
+        + daily["pm25_daily_coverage_pct"].round(0).astype(str)
+        + "%<br>"
     )
 
     if "wind_speed_10m_mean_ms" in daily.columns:
-        daily["hover_text"] += "Wind speed: " + daily["wind_speed_10m_mean_ms"].round(1).astype(str) + " m/s<br>"
+        daily["hover_text"] += (
+            "Wind speed: "
+            + daily["wind_speed_10m_mean_ms"].round(1).astype(str)
+            + " m/s<br>"
+        )
 
     if "temperature_2m_mean_c" in daily.columns:
-        daily["hover_text"] += "Temperature: " + daily["temperature_2m_mean_c"].round(1).astype(str) + " deg C"
+        daily["hover_text"] += (
+            "Temperature: "
+            + daily["temperature_2m_mean_c"].round(1).astype(str)
+            + " deg C"
+        )
 
     fig = make_subplots(
         rows=1,
@@ -347,15 +367,30 @@ def build_pm25_exceedance_dot_matrix(
                 cmax=100,
                 line=dict(width=0),
             ),
-            text=exceedance_summary["exceedance_pct"].round(0).astype(int).astype(str) + "%",
+            text=exceedance_summary["exceedance_pct"].round(0).astype(int).astype(str)
+            + "%",
             textposition="outside",
             hovertext=(
-                "<b>" + exceedance_summary["city_display"] + "</b><br>"
-                + "Valid days: " + exceedance_summary["valid_days"].astype(str) + "<br>"
-                + "Exceedance days: " + exceedance_summary["exceedance_days"].astype(int).astype(str) + "<br>"
-                + "Exceedance share: " + exceedance_summary["exceedance_pct"].round(1).astype(str) + "%<br>"
-                + "Longest streak: " + exceedance_summary["longest_exceedance_streak_days"].astype(int).astype(str) + " days<br>"
-                + "Median PM2.5: " + exceedance_summary["median_pm25"].round(1).astype(str) + " ug/m3"
+                "<b>"
+                + exceedance_summary["city_display"]
+                + "</b><br>"
+                + "Valid days: "
+                + exceedance_summary["valid_days"].astype(str)
+                + "<br>"
+                + "Exceedance days: "
+                + exceedance_summary["exceedance_days"].astype(int).astype(str)
+                + "<br>"
+                + "Exceedance share: "
+                + exceedance_summary["exceedance_pct"].round(1).astype(str)
+                + "%<br>"
+                + "Longest streak: "
+                + exceedance_summary["longest_exceedance_streak_days"]
+                .astype(int)
+                .astype(str)
+                + " days<br>"
+                + "Median PM2.5: "
+                + exceedance_summary["median_pm25"].round(1).astype(str)
+                + " ug/m3"
             ),
             hoverinfo="text",
             showlegend=False,
@@ -364,11 +399,13 @@ def build_pm25_exceedance_dot_matrix(
         col=2,
     )
 
-    month_starts = pd.date_range(f"{analysis_year}-01-01", f"{analysis_year}-12-01", freq="MS")
+    month_starts = pd.date_range(
+        f"{analysis_year}-01-01", f"{analysis_year}-12-01", freq="MS"
+    )
 
     for month_start in month_starts:
         fig.add_vline(
-            x=month_start,
+            x=month_start.to_pydatetime(),
             line_width=0.6,
             line_dash="dot",
             line_color="rgba(80,80,80,0.35)",
