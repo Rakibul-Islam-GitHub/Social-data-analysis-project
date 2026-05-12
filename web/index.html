@@ -190,14 +190,14 @@
     }
 
     .section {
-      padding: 92px min(7vw, 90px);
+      padding: 64px min(6vw, 78px);
       position: relative;
     }
 
-    .section-narrow { max-width: 1180px; margin: 0 auto; }
+    .section-narrow { max-width: 1220px; margin: 0 auto; }
 
     .hero {
-      min-height: 100vh;
+      min-height: 94vh;
       display: grid;
       align-items: center;
       overflow: hidden;
@@ -311,15 +311,15 @@
 
     .viz-frame iframe {
       width: 100%;
-      height: 720px;
+      height: 680px;
       border: 0;
       display: block;
       background: #fff;
     }
 
-    .viz-frame.tall iframe { height: 860px; }
-    .viz-frame.mid iframe { height: 680px; }
-    .viz-frame.short iframe { height: 620px; }
+    .viz-frame.tall iframe { height: 800px; }
+    .viz-frame.mid iframe { height: 640px; }
+    .viz-frame.short iframe { height: 580px; }
 
     .caption {
       color: var(--muted);
@@ -392,8 +392,8 @@
 
     .reveal {
       opacity: 0;
-      transform: translateY(26px);
-      transition: opacity .8s ease, transform .8s ease;
+      transform: translateY(12px);
+      transition: opacity .42s ease, transform .42s ease;
     }
 
     .reveal.in-view {
@@ -422,6 +422,48 @@
       color: var(--ink);
     }
 
+
+    .hero-story {
+      display: grid;
+      gap: 5px;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.18rem, 2vw, 1.55rem);
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 860px;
+      font-weight: 600;
+    }
+
+    .story-note {
+      color: var(--muted);
+      line-height: 1.72;
+      font-size: 1.02rem;
+      max-width: 900px;
+    }
+
+    .reference-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .reference-item {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: color-mix(in srgb, var(--card-solid) 76%, transparent);
+    }
+
+    .reference-item small {
+      color: var(--muted);
+      display: block;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+
     footer {
       border-top: 1px solid var(--line);
       color: var(--muted);
@@ -434,7 +476,7 @@
       .mobile-topbar { display: block; }
       main { margin-left: 0; }
       .hero-grid { grid-template-columns: 1fr; }
-      .section { padding: 74px 22px; }
+      .section { padding: 52px 22px; }
       .viz-frame iframe { height: 620px; }
       .viz-frame.tall iframe { height: 760px; }
     }
@@ -448,7 +490,7 @@
   </style>
 </head>
 
-<body data-bs-spy="scroll" data-bs-target="#storyMenu" data-bs-smooth-scroll="true" tabindex="0">
+<body tabindex="0">
   <!-- Mobile topbar -->
   <div class="mobile-topbar px-3 py-2">
     <div class="d-flex justify-content-between align-items-center">
@@ -486,8 +528,9 @@
       <a class="nav-link" href="#particles"><i class="bi bi-fingerprint"></i> Particle profiles</a>
       <a class="nav-link" href="#episodes"><i class="bi bi-wind"></i> Weather episodes</a>
       <a class="nav-link" href="#fingerprint"><i class="bi bi-diagram-3"></i> City fingerprints</a>
-      <a class="nav-link" href="#dubai"><i class="bi bi-buildings"></i> Dubai deep dive</a>
+
       <a class="nav-link" href="#takeaways"><i class="bi bi-stars"></i> Takeaways</a>
+      <a class="nav-link" href="#notebook"><i class="bi bi-journal-code"></i> Notebook</a>
       <a class="nav-link" href="#references"><i class="bi bi-book"></i> References</a>
 
     </nav>
@@ -516,8 +559,9 @@
         <a class="nav-link" href="#particles" data-bs-dismiss="offcanvas"><i class="bi bi-fingerprint"></i> Particle profiles</a>
         <a class="nav-link" href="#episodes" data-bs-dismiss="offcanvas"><i class="bi bi-wind"></i> Weather episodes</a>
         <a class="nav-link" href="#fingerprint" data-bs-dismiss="offcanvas"><i class="bi bi-diagram-3"></i> City fingerprints</a>
-        <a class="nav-link" href="#dubai" data-bs-dismiss="offcanvas"><i class="bi bi-buildings"></i> Dubai deep dive</a>
+
         <a class="nav-link" href="#takeaways" data-bs-dismiss="offcanvas"><i class="bi bi-stars"></i> Takeaways</a>
+        <a class="nav-link" href="#notebook" data-bs-dismiss="offcanvas"><i class="bi bi-journal-code"></i> Notebook</a>
         <a class="nav-link" href="#references" data-bs-dismiss="offcanvas"><i class="bi bi-book"></i> References</a>
       </div>
     </div>
@@ -527,24 +571,39 @@
     <!-- Hero -->
     <section id="hero" class="section hero">
       <div class="section-narrow hero-grid">
-        <div class="reveal">
+        <div class="reveal hero-story">
           <span class="kicker"><i class="bi bi-cloud-haze2"></i> Global urban air story</span>
           <h1>What a City Average Hides</h1>
-          <p class="lead-text">
-            We followed PM2.5, PM10, and weather across selected global cities to ask a simple question:
-            when people say one city is more polluted than another, what patterns disappear behind that average?
+          <p class="hero-subtitle">
+            The surprising truth about the air we breathe, and why one number can never tell the full story.
+          </p>
+
+          <p class="story-note">
+            Every day, people in cities like Dubai, Delhi, and Dhaka check air-quality apps and see a simple label.
+            But a single average hides the timing, the bad days, the particle mix, and the weather conditions behind the number.
+          </p>
+
+          <p class="story-note">
+            In this project, we analysed air quality and weather across selected global cities to uncover what is behind this average.
+          </p>
+
+          <p class="story-note">
+            What we found is simple: cities do not only differ in <em>how polluted</em> they are. They differ in
+            <em>when</em> pollution appears, <em>how often</em> people live through unhealthy days, and <em>what kind</em>
+            of particle profile shapes the air.
           </p>
 
           <div>
             Authors: <strong>s260126</strong> & <strong>s234667</strong><br />
           </div>
-          <div class="d-flex flex-wrap gap-3 mt-4">
-            <a class="btn btn-story btn-accent" href="#map">Start the story</a>
+
+          <div class="d-flex flex-wrap gap-3 mt-2">
+            <a class="btn btn-story btn-accent" href="#data">Start the journey</a>
             <a class="btn btn-story" href="#takeaways">Jump to findings</a>
           </div>
         </div>
 
-        <div class="glass-card p-4 reveal">
+        <div class="glass-card p-4 reveal mb-5">
           <div class="stat-grid">
             <div class="stat">
               <div class="stat-value">15</div>
@@ -552,20 +611,20 @@
             </div>
             <div class="stat">
               <div class="stat-value">2025</div>
-              <div class="stat-label">analysis window</div>
+              <div class="stat-label">common analysis window</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">1.5M+</div>
+              <div class="stat-label">raw pollutant records</div>
             </div>
             <div class="stat">
               <div class="stat-value">24h</div>
-              <div class="stat-label">WHO PM2.5 guideline basis</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">700k+</div>
-              <div class="stat-label">Raw hourly data</div>
+              <div class="stat-label">WHO PM2.5 exceedance basis</div>
             </div>
           </div>
           <p class="caption mb-0 mt-3">
-            The story uses coverage-aware city selection, robust median comparisons, WHO exceedance burden,
-            particle profiles, weather context, and a Dubai-focused deep dive.
+            The story uses coverage-aware city selection, monthly medians, WHO exceedance burden,
+            particle profiles, weather context, and city fingerprint clustering.
           </p>
         </div>
       </div>
@@ -575,31 +634,39 @@
     <section id="data" class="section">
       <div class="section-narrow reveal">
         <div class="section-label">01 · Data journey</div>
-        <h2>From public sensors to a story-ready dataset.</h2>
-        <p class="lead-text">
-          We combined OpenAQ air-quality measurements with Open-Meteo weather variables, then filtered cities using data coverage.
-          This means the story starts with a methodological choice: compare only cities with enough usable evidence.
-        </p>
+<h2>From public sensors to a story-ready dataset.</h2>
+<p class="lead-text">
+  We started with more than <strong>1.5 million raw OpenAQ pollutant records</strong> from 18 candidate cities.
+  After checking coverage and data quality, we kept <strong>15 cities</strong> for the main 2025 comparison and enriched the air-quality data with Open-Meteo weather features.
+</p>
+
         <div class="row g-4 mt-3">
           <div class="col-md-4">
-            <div class="story-card">
-              <h3><i class="bi bi-cloud-download me-2 text-danger"></i>OpenAQ</h3>
-              <p class="caption mb-0">PM2.5 and PM10 observations were fetched from the OpenAQ S3 archive, aggregated from location-hour to city-hour, then city-day and city-month.</p>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="story-card">
-              <h3><i class="bi bi-cloud-sun me-2 text-warning"></i>Open-Meteo</h3>
-              <p class="caption mb-0">Weather features such as wind speed, temperature, humidity, cloud cover, and precipitation were joined to city-hourly data.</p>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="story-card">
-              <h3><i class="bi bi-check2-circle me-2 text-success"></i>Coverage audit</h3>
-              <p class="caption mb-0">Cities with weak or misaligned coverage were excluded from the main web story and retained as documented context.</p>
-            </div>
-          </div>
-        </div>
+  <div class="story-card">
+    <h3><i class="bi bi-cloud-download me-2 text-danger"></i>OpenAQ</h3>
+    <p class="caption mb-0">
+      PM2.5 and PM10 records were cleaned and reshaped into city-hourly, daily, and monthly datasets.
+    </p>
+  </div>
+</div>
+
+<div class="col-md-4">
+  <div class="story-card">
+    <h3><i class="bi bi-cloud-sun me-2 text-warning"></i>Open-Meteo</h3>
+    <p class="caption mb-0">
+      Weather features such as wind speed, temperature, humidity, cloud cover, and precipitation were joined to the data.
+    </p>
+  </div>
+</div>
+
+<div class="col-md-4">
+  <div class="story-card">
+    <h3><i class="bi bi-check2-circle me-2 text-success"></i>Coverage audit</h3>
+    <p class="caption mb-0">
+      We removed cities with weak 2025 coverage, so the final comparison is based on more reliable city data.
+    </p>
+  </div>
+</div>
       </div>
     </section>
 
@@ -608,15 +675,19 @@
       <div class="section-narrow reveal">
         <div class="chapter-number">01</div>
         <div class="section-label">Global view</div>
-        <h2>Where does PM2.5 concentrate across the year?</h2>
+        <h2>Where is the air thickest, and when?</h2>
         <p class="lead-text">
-          The animated map shows monthly median PM2.5 across selected cities. Marker size reflects active monitoring coverage,
-          while color shows the pollution burden in that month.
+          Watch how the world breathe month by month. Each circle shows a city’s monthly median PM2.5 in 2025.
+          Color shows pollution burden and marker size reflects active monitoring coverage.
         </p>
         <div class="viz-frame mt-4">
           <iframe title="Autoplay global PM2.5 map" src="../outputs/figures/autoplay_monthly_median_pm25_global_map.html"></iframe>
         </div>
-        <p class="caption"><strong>Figure:</strong> Animated monthly map of median PM2.5. The map introduces the global geography of the story before we look inside the year.</p>
+        <p class="caption">
+  <strong>What to notice:</strong> The map shows where monthly PM2.5 is highest in 2025.
+  South Asian cities appear darker more often, while developed-city references stay lighter and more stable.
+  Marker size reflects active monitoring coverage, not city population.
+</p>
       </div>
     </section>
 
@@ -625,13 +696,17 @@
       <div class="section-narrow reveal">
         <div class="chapter-number">02</div>
         <div class="section-label">Seasonality fingerprint</div>
-        <h2>The same city can look different by month.</h2>
+        <h2>Every city has its own dangerous season.</h2>
         <p class="lead-text">
-          A yearly average hides the rhythm of pollution. The heatmap reveals which cities stay high throughout the year and which ones rise or fall seasonally.
+          A yearly average hides the rhythm of pollution. The heatmap shows which cities stay high throughout the year and which cities rise or fall by season.
         </p>
         <div class="viz-frame mid mt-4">
           <iframe title="City-month PM2.5 heatmap" src="../outputs/figures/city_month_median_pm25_heatmap.html"></iframe>
         </div>
+        <p class="caption">
+  <strong>What to notice:</strong> The heatmap shows that pollution has a seasonal rhythm.
+  Delhi, Dhaka and Lahore have several high-PM2.5 months, while New York, London, Tokyo and Los Angeles stay much lower.
+</p>
       </div>
     </section>
 
@@ -640,14 +715,18 @@
       <div class="section-narrow reveal">
         <div class="chapter-number">03</div>
         <div class="section-label">Ranking transitions</div>
-        <h2>Rankings move. Exposure does not wait for annual averages.</h2>
+        <h2>The ranking changes every month.</h2>
         <p class="lead-text">
-          The bump chart ranks cities month by month using median PM2.5. It shows why a static “most polluted city” list is too simple.
+          Yearly averages create a false sense of a fixed winner. The bump chart shows how city positions shift month by month.
         </p>
         <div class="pull-quote">The most polluted city depends on when you look.</div>
         <div class="viz-frame tall mt-4">
           <iframe title="Monthly PM2.5 rank transitions" src="../outputs/figures/monthly_pm25_median_bump_chart.html"></iframe>
         </div>
+        <p class="caption">
+  <strong>What to notice:</strong> The bump chart shows that city rankings change month by month.
+  This is why a single annual ranking cannot fully describe how people experience pollution during the year.
+</p>
       </div>
     </section>
 
@@ -656,13 +735,17 @@
       <div class="section-narrow reveal">
         <div class="chapter-number">04</div>
         <div class="section-label">Lived burden</div>
-        <h2>How many days cross the WHO daily guideline?</h2>
+        <h2>How many days is the air actually unhealthy?</h2>
         <p class="lead-text">
-          The dot matrix changes the question from “what is the average?” to “how often do people experience above-guideline days?”
+          A yearly average can hide repeated exposure. The dot matrix asks a more human question: how often do people breathe air above the WHO daily PM2.5 guideline?
         </p>
         <div class="viz-frame tall mt-4">
           <iframe title="WHO daily PM2.5 exceedance matrix" src="../outputs/figures/pm25_who_daily_exceedance_dot_matrix_2025.html"></iframe>
         </div>
+        <p class="caption">
+  <strong>What to notice:</strong> Red days are above the WHO daily PM2.5 guideline.
+  Delhi, Lahore and Dhaka have the highest exceedance burden, while cities such as New York, Tokyo and London have many more below-guideline days.
+</p>
       </div>
     </section>
 
@@ -671,13 +754,17 @@
       <div class="section-narrow reveal">
         <div class="chapter-number">05</div>
         <div class="section-label">Particle profile</div>
-        <h2>Bad air is not one single condition.</h2>
+        <h2>Not all pollution is the same.</h2>
         <p class="lead-text">
-          PM2.5 and PM10 describe different particle-size ranges. The PM2.5/PM10 ratio gives a particle-profile indicator, not direct source attribution.
+          PM2.5 and PM10 describe different particle-size ranges. The PM2.5 to PM10 ratio helps compare particle profiles, but it does not prove exact sources.
         </p>
         <div class="viz-frame mid mt-4">
           <iframe title="Particle profile ridgeline" src="../outputs/figures/particle_profile_pm25_pm10_ridgeline_2025.html"></iframe>
         </div>
+        <p class="caption">
+  <strong>What to notice:</strong> The ridgeline plot compares PM2.5 / PM10 ratios.
+  A higher ratio suggests a more fine-particle-dominated profile, while a lower ratio suggests more PM10-heavy conditions.
+</p>
       </div>
     </section>
 
@@ -686,13 +773,17 @@
       <div class="section-narrow reveal">
         <div class="chapter-number">06</div>
         <div class="section-label">Weather episodes</div>
-        <h2>Weather context changes the shape of a bad day.</h2>
+        <h2>When the wind changes, pollution episodes change too.</h2>
         <p class="lead-text">
-          Wind speed, PM10, and particle ratio help distinguish high-PM2.5 days from PM10-heavy or coarse-particle-influenced episodes.
+          Pollution never happens in isolation. Wind speed, PM10, and particle ratio help show how weather context separates different kinds of bad-air days.
         </p>
         <div class="viz-frame tall mt-4">
           <iframe title="Weather episode fingerprints" src="../outputs/figures/weather_episode_fingerprint_2025.html"></iframe>
         </div>
+        <p class="caption">
+  <strong>What to notice:</strong> Each point is one city-day.
+  The chart shows that high-pollution days can happen under different wind and particle-profile conditions across cities.
+</p>
       </div>
     </section>
 
@@ -701,65 +792,67 @@
       <div class="section-narrow reveal">
         <div class="chapter-number">07</div>
         <div class="section-label">City fingerprints</div>
-        <h2>Cities cluster by behavior, not just pollution level.</h2>
+        <h2>Every city has its own pollution fingerprint.</h2>
         <p class="lead-text">
-          The fingerprint map compresses pollution burden, exceedance, seasonality, particle profile, and weather into one exploratory view.
+          The fingerprint map combines seasonality, exceedance burden, particle profile, and weather context to compare cities by behavior, not only by pollution level.
         </p>
         <div class="viz-frame mt-4">
           <iframe title="City fingerprint PCA" src="../outputs/figures/city_fingerprint_pca_2025.html"></iframe>
         </div>
+        <p class="caption">
+  <strong>What to notice:</strong> Cities close together have similar pollution fingerprints.
+  Delhi, Dhaka and Lahore form a high-burden cluster, while Dubai and Riyadh separate as a different Gulf-city pattern.
+</p>
       </div>
     </section>
 
-    <!-- Dubai -->
-    <section id="dubai" class="section">
-      <div class="section-narrow reveal">
-        <div class="chapter-number">08</div>
-        <div class="section-label">Dubai deep dive</div>
-        <h2>Inside one city, timing still matters.</h2>
-        <p class="lead-text">
-          Dubai is the local case study. The hour-by-month heatmap shows that even a city-level average hides daily timing and seasonal rhythm.
-        </p>
-        <div class="viz-frame mt-4">
-          <iframe title="Dubai hour-month PM2.5 heatmap" src="../outputs/figures/dubai_hour_month_pm25_heatmap_2025.html"></iframe>
-        </div>
-        <p class="caption"><strong>Figure:</strong> Dubai’s diurnal pollution fingerprint. Darker cells show higher median PM2.5 by local hour and month.</p>
-      </div>
-    </section>
 
     <!-- Takeaways -->
     <section id="takeaways" class="section">
       <div class="section-narrow reveal">
         <div class="section-label">Final takeaways</div>
-        <h2>Three things the city average hides.</h2>
+        <h2>Three things every city average hides.</h2>
         <div class="insight-list">
           <div class="insight">
             <i class="bi bi-arrow-repeat"></i>
             <div>
               <h3>Rankings are unstable.</h3>
-              <p class="caption mb-0">City positions shift month by month, so annual rankings hide seasonal dynamics and short pollution episodes.</p>
+              <p class="caption mb-0">
+  The “most polluted city” changes across months. Annual rankings hide seasonal peaks and short pollution episodes.
+</p>
             </div>
           </div>
           <div class="insight">
             <i class="bi bi-calendar2-x"></i>
             <div>
-              <h3>Exceedance burden matters.</h3>
-              <p class="caption mb-0">The number of days above the WHO PM2.5 guideline better represents lived exposure than a single mean value.</p>
+              <h3>Exposure matters more than averages.</h3>
+<p class="caption mb-0">
+  The number of above-guideline days shows the lived burden more clearly than one yearly mean.
+</p>
             </div>
           </div>
           <div class="insight">
             <i class="bi bi-fingerprint"></i>
             <div>
               <h3>Cities have fingerprints.</h3>
-              <p class="caption mb-0">PM2.5 burden, PM10 context, weather, seasonality, and daily episodes create distinct pollution profiles.</p>
+<p class="caption mb-0">
+  PM2.5 burden, PM10 context, weather, seasonality, and daily episodes create distinct city profiles.
+</p>
             </div>
           </div>
         </div>
 
         <div class="story-card mt-5">
+          <h3>The air we breathe is not just data.</h3>
+          <p class="caption mb-0">
+            It is a daily story of health, timing, place, and exposure. Understanding what a city average hides is the first step toward safe air and better quality of life.
+          </p>
+        </div>
+
+        <div class="story-card mt-4">
           <h3>Limitations</h3>
           <p class="caption mb-0">
-            The analysis is descriptive and coverage-aware. PM2.5/PM10 ratios are interpreted as particle-profile indicators, not as direct source attribution.
+            The analysis is descriptive and coverage-aware. PM2.5 to PM10 ratios are interpreted as particle-profile indicators, not as direct source attribution.
             Sensor coverage differs by city, and source confirmation would require additional land-use, emissions, or source-apportionment data.
           </p>
         </div>
@@ -770,7 +863,7 @@
 <section id="notebook" class="section">
   <div class="section-narrow reveal">
     <div class="section-label">Reproducibility</div>
-    <h2>See the analysis notebook.</h2>
+    <h2>See the explainer notebook.</h2>
     <p class="lead-text">
       The full analysis notebook documents the data preparation decisions, visual analysis workflow,
       and code used to generate the figures in this story.
@@ -787,7 +880,7 @@
 
         <a
           class="btn btn-story btn-accent"
-          href="https://github.com/Rakibul-Islam-GitHub/Social-data-analysis-project/blob/main/notebooks/02_analysis.ipynb"
+          href="https://github.com/Rakibul-Islam-GitHub/Social-data-analysis-project/blob/main/notebooks/explainerNotebook.ipynb"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -802,90 +895,46 @@
 <section id="references" class="section">
   <div class="section-narrow reveal">
     <div class="section-label">References</div>
-    <h2>Data sources and methods.</h2>
+    <h2>Sources used in the project.</h2>
     <p class="lead-text">
-      This project combines public air-quality observations, historical weather data,
-      and guideline-based interpretation. The references below support the data pipeline
-      and the meaning of the main air-quality indicators.
+      These references support the health motivation, data sources, weather enrichment, and narrative visualization design.
     </p>
 
-    <div class="method-table mt-4">
-      <table class="table table-hover align-middle">
-        <thead>
-          <tr>
-            <th scope="col">Source</th>
-            <th scope="col">Used for</th>
-            <th scope="col">Link</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>OpenAQ</strong></td>
-            <td>PM2.5 and PM10 air-quality observations from monitoring locations.</td>
-            <td>
-              <a href="https://openaq.org/" target="_blank" rel="noopener noreferrer">
-                openaq.org <i class="bi bi-box-arrow-up-right"></i>
-              </a>
-            </td>
-          </tr>
+    <div class="reference-list">
+      <div class="reference-item">
+        <strong>[1]</strong> World Health Organization, “Ambient (outdoor) air pollution,” WHO, Dec. 19, 2022.
+        <small><a href="https://www.who.int/news-room/fact-sheets/detail/ambient-(outdoor)-air-quality-and-health" target="_blank" rel="noopener noreferrer">https://www.who.int/news-room/fact-sheets/detail/ambient-(outdoor)-air-quality-and-health <i class="bi bi-box-arrow-up-right"></i></a></small>
+      </div>
 
-          <tr>
-            <td><strong>OpenAQ Data Access / S3 archive</strong></td>
-            <td>Historical measurement files used to build city-hourly, daily, and monthly datasets.</td>
-            <td>
-              <a href="https://docs.openaq.org/" target="_blank" rel="noopener noreferrer">
-                OpenAQ docs <i class="bi bi-box-arrow-up-right"></i>
-              </a>
-            </td>
-          </tr>
+      <div class="reference-item">
+        <strong>[2]</strong> National Institute of Environmental Health Sciences, “Air Pollution and Your Health,” NIEHS.
+        <small><a href="https://www.niehs.nih.gov/health/topics/agents/air-pollution" target="_blank" rel="noopener noreferrer">https://www.niehs.nih.gov/health/topics/agents/air-pollution <i class="bi bi-box-arrow-up-right"></i></a></small>
+      </div>
 
-          <tr>
-            <td><strong>Open-Meteo Historical Weather API</strong></td>
-            <td>Temperature, humidity, wind speed, precipitation, cloud cover, and pressure features.</td>
-            <td>
-              <a href="https://open-meteo.com/en/docs/historical-weather-api" target="_blank" rel="noopener noreferrer">
-                Open-Meteo API <i class="bi bi-box-arrow-up-right"></i>
-              </a>
-            </td>
-          </tr>
+      <div class="reference-item">
+        <strong>[3]</strong> B. Vandeninden <em>et al.</em>, “Implications of spatial and seasonal air pollution patterns, socioeconomic disparities, and 15-minute communities for achieving WHO air quality guidelines,” <em>Scientific Reports</em>, vol. 15, Art. no. 13683, 2025.
+        <small><a href="https://doi.org/10.1038/s41598-025-98123-8" target="_blank" rel="noopener noreferrer">https://doi.org/10.1038/s41598-025-98123-8 <i class="bi bi-box-arrow-up-right"></i></a></small>
+      </div>
 
-          <tr>
-            <td><strong>World Health Organization</strong></td>
-            <td>Daily PM2.5 guideline threshold used for exceedance analysis.</td>
-            <td>
-              <a href="https://www.who.int/publications/i/item/9789240034228" target="_blank" rel="noopener noreferrer">
-                WHO AQ guidelines <i class="bi bi-box-arrow-up-right"></i>
-              </a>
-            </td>
-          </tr>
+      <div class="reference-item">
+        <strong>[4]</strong> OpenAQ, “OpenAQ API Docs,” OpenAQ Docs.
+        <small><a href="https://docs.openaq.org/" target="_blank" rel="noopener noreferrer">https://docs.openaq.org/ <i class="bi bi-box-arrow-up-right"></i></a></small>
+      </div>
 
-          <tr>
-            <td><strong>Plotly</strong></td>
-            <td>Interactive maps, heatmaps, bump charts, dot matrices, ridgelines, and PCA visualizations.</td>
-            <td>
-              <a href="https://plotly.com/python/" target="_blank" rel="noopener noreferrer">
-                Plotly Python <i class="bi bi-box-arrow-up-right"></i>
-              </a>
-            </td>
-          </tr>
+      <div class="reference-item">
+        <strong>[5]</strong> E. Segel and J. Heer, “Narrative Visualization: Telling Stories with Data,” <em>IEEE Transactions on Visualization and Computer Graphics</em>, vol. 16, no. 6, pp. 1139–1148, 2010.
+        <small><a href="https://doi.org/10.1109/TVCG.2010.179" target="_blank" rel="noopener noreferrer">https://doi.org/10.1109/TVCG.2010.179 <i class="bi bi-box-arrow-up-right"></i></a></small>
+      </div>
 
-          <tr>
-            <td><strong>Bootstrap</strong></td>
-            <td>Responsive layout, vertical navigation, cards, and interface components.</td>
-            <td>
-              <a href="https://getbootstrap.com/" target="_blank" rel="noopener noreferrer">
-                Bootstrap <i class="bi bi-box-arrow-up-right"></i>
-              </a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="reference-item">
+        <strong>[6]</strong> Open-Meteo, “Historical Weather API,” Open-Meteo.
+        <small><a href="https://open-meteo.com/en/docs/historical-weather-api" target="_blank" rel="noopener noreferrer">https://open-meteo.com/en/docs/historical-weather-api <i class="bi bi-box-arrow-up-right"></i></a></small>
+      </div>
     </div>
 
     <p class="caption mt-3">
-      Note: PM2.5 / PM10 ratios are used as descriptive particle-profile indicators,
-      not as direct source attribution. Source attribution would require additional
-      emissions, land-use, or source-apportionment data.
+      Note: PM2.5 to PM10 ratios are used as descriptive particle-profile indicators, not as direct source attribution.
+      Source attribution would require additional emissions, land-use, or source-apportionment data.
     </p>
   </div>
 </section>
@@ -914,19 +963,21 @@
       root.setAttribute('data-bs-theme', theme);
       localStorage.setItem('pm25-story-theme', theme);
       const isDark = theme === 'dark';
+
       labels.forEach(label => label.textContent = isDark ? 'Dark mode' : 'Light mode');
+
       icons.forEach(icon => {
         icon.classList.toggle('bi-toggle2-on', isDark);
         icon.classList.toggle('bi-toggle2-off', !isDark);
       });
+
       document.querySelectorAll('.js-theme-toggle i.bi-moon-stars, .js-theme-toggle i.bi-brightness-high').forEach(icon => {
         icon.classList.toggle('bi-moon-stars', !isDark);
         icon.classList.toggle('bi-brightness-high', isDark);
       });
     }
 
-    const savedTheme = localStorage.getItem('pm25-story-theme') || 'light';
-    setTheme(savedTheme);
+    setTheme(localStorage.getItem('pm25-story-theme') || 'light');
 
     themeButtons.forEach(button => {
       button.addEventListener('click', () => {
@@ -935,21 +986,82 @@
       });
     });
 
+    // Fast reveal, so users do not need to scroll far before content appears
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('in-view');
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
       });
-    }, { threshold: 0.14 });
+    }, {
+      threshold: 0.02,
+      rootMargin: '0px 0px -8% 0px'
+    });
 
     document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-    // Improve active nav state after iframe-heavy sections load
-    window.addEventListener('load', () => {
-      bootstrap.ScrollSpy.getOrCreateInstance(document.body, {
-        target: '#storyMenu',
-        smoothScroll: true,
-        rootMargin: '0px 0px -65%'
-      }).refresh();
+    // Smooth section navigation and stable active menu highlighting
+    const navLinks = Array.from(document.querySelectorAll('.story-nav .nav-link[href^="#"]'));
+    const sections = navLinks
+      .map(link => document.querySelector(link.getAttribute('href')))
+      .filter(Boolean);
+
+    function setActiveNav(sectionId) {
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${sectionId}`);
+      });
+    }
+
+    function updateActiveNav() {
+      const marker = window.innerHeight * 0.32;
+      let current = sections[0];
+
+      sections.forEach(section => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= marker && rect.bottom >= marker) {
+          current = section;
+        }
+      });
+
+      if (current) setActiveNav(current.id);
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateActiveNav();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    window.addEventListener('resize', updateActiveNav);
+    window.addEventListener('load', updateActiveNav);
+
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', event => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (!target) return;
+
+        event.preventDefault();
+
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+
+        setActiveNav(target.id);
+        history.pushState(null, '', `#${target.id}`);
+
+        const offcanvas = link.closest('.offcanvas');
+        if (offcanvas) {
+          const instance = bootstrap.Offcanvas.getInstance(offcanvas);
+          if (instance) instance.hide();
+        }
+      });
     });
   </script>
 </body>
